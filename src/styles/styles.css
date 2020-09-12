@@ -4,6 +4,53 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Arimo', sans-serif;
+  background: rgb(253, 252, 252);
+}
+
+.button {
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 22px;
+  color: #fff;
+  font-weight: bold;
+  padding: 8px 16px;
+}
+
+.button--orange {
+  background: #ff9d0c;
+}
+
+.button--blue {
+  background: #232f3e;
+}
+
+.button--circle {
+  height: 32px;
+  width: 32px;
+  background: #232f3e;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: .2s ease;
+  position: relative;
+  text-align: center;
+}
+
+.button--circle:hover {
+  background: #3f546e;
+}
+
+.button__img {
+  height: 16px;
+}
+
+.navbar__wrapper {
+  position: sticky;
+  width: 100%;
 }
 
 .navbar {
@@ -13,17 +60,39 @@ body {
   box-sizing: border-box;
   height: 80px;
   padding: 16px 24px;
-  box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.2);
-  position: sticky;
+  background: #fff;
+}
+
+.nav__categories {
+  height: 32px;
+  box-shadow: 0px 6px 3px -3px rgba(0, 0, 0, 0.3);
+  background: #232f3e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.nav__category {
+  font-size: 14px;
+  color: #f2f2f2;
+  margin: auto 8px;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.nav__category:hover {
+  color: #ff9d0c;
 }
 
 .nav__logo {
   height: 32px;
   margin-top: 8px;
+  cursor: pointer;
 }
 
 .searchbar__wrapper {
-  flex-grow: 1;
+  flex: 1;
   padding: 0px 16px;
   display: flex;
   height: 100%;
@@ -82,12 +151,23 @@ body {
   font-weight: bold;
   margin-right: 16px;
   cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: .2s ease;
+}
+
+.nav__link:hover {
+  background: #fafafa;
 }
 
 .nav__link--small {
   font-weight: normal;
   color: #333333;
   font-size: 14px;
+}
+
+.nav__link--bold {
+  color: #232f3e;
 }
 
 .nav__cart {
@@ -97,9 +177,16 @@ body {
   cursor: pointer;
   font-weight: bold;
   color: #ff9d0c;
+  padding: 0px 8px;
+  border-radius: 4px;
+  transition: .2s ease;
+}
+
+.nav__cart:hover {
+  background: #fafafa;
 }
 
 .nav__cart--icon {
   height: 24px;
-  margin: auto 8px;
+  margin-right: 8px;
 }
