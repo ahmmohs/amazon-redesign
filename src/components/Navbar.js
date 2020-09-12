@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useStateValue } from '../StateProvider';
+
 import logo from '../assets/logo.png';
 import searchIcon from '../assets/search.svg';
 import cartIcon from '../assets/cart.svg';
@@ -8,7 +10,9 @@ import cartIcon from '../assets/cart.svg';
  * Navigation component.
  * 
  */
-function Navbar() {
+function Navbar({ setSidebar, sidebarOpen }) {
+  const [{ totalQuantity }] = useStateValue();
+
   return(
     <div className="navbar__wrapper">
       <div className="navbar">
@@ -38,9 +42,9 @@ function Navbar() {
             <div style={{color: "#ff9d0c"}} className="nav__link--bold">Prime</div>
           </div>
           {/* Cart Information */}
-          <div className="nav__cart">
+          <div className="nav__cart" onClick={() => setSidebar(!sidebarOpen)}>
             <img src={cartIcon} alt="" className="nav__cart--icon"/>
-            <div className="nav__cart--count">0</div>
+            <div className="nav__cart--count">{totalQuantity}</div>
           </div>
         </div>
       </div>

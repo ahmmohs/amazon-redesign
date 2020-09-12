@@ -1,0 +1,122 @@
+.sidebar {
+  position: fixed;
+  top: 112px;
+  right: -100%;
+  height: calc(100vh - 112px);
+  width: 328px;
+  background: #fff;
+  padding: 16px;
+  box-shadow: -3px 3px 3px 0px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  transition: right .2s ease-in-out;
+  color: #232f3e;
+}
+
+.sidebar--visible {
+  right: 0;
+  transition: right .2s ease-in-out;
+}
+
+.sidebar__header {
+  font-size: 24px;
+  color: #232f3e;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.sidebar__product {
+  background: #f2f2f2;
+  padding: 8px 8px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar__product--left {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar__image__wrapper {
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 64px;
+  width: 64px;
+  border-radius: 8px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.sidebar__image {
+  height: 48px;
+}
+
+.sidebar__title {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.quantity {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.sidebar__subtotal {
+  background: #f2f2f2;
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: #232f3e;
+  margin-bottom: 24px;
+}
+
+.subtotal__title {
+  font-size: 24px;
+  color: #232f3e;
+  font-weight: bold;
+}
+
+.sidebar__icon__wrapper {
+  height: 32px;
+  width: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: .2s ease;
+  border-radius: 4px;
+}
+
+.sidebar__icon__wrapper:hover {
+  background: #fafafa;
+}
+
+.sidebar__icon {
+  height: 14px;
+}
+
+.sidebar__subtitle {
+  font-size: 14px;
+}
+
+.cart__divider {
+  margin-bottom: 24px;
+  background-color: #f2f2f2;
+  height: 1px;
+  border: none;
+}

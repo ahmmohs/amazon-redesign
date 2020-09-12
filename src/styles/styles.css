@@ -16,6 +16,12 @@ body {
   color: #fff;
   font-weight: bold;
   padding: 8px 16px;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.button:hover {
+  background: #ffb60c;
 }
 
 .button--orange {
@@ -38,10 +44,16 @@ body {
   transition: .2s ease;
   position: relative;
   text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
 }
 
 .button--circle:hover {
   background: #3f546e;
+}
+
+.button--circle:active {
+  transform: scale(.9);
 }
 
 .button__img {
@@ -49,8 +61,9 @@ body {
 }
 
 .navbar__wrapper {
-  position: sticky;
+  position: fixed;
   width: 100%;
+  z-index: 1;
 }
 
 .navbar {

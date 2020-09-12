@@ -6,15 +6,17 @@ const propTypes = {
   icon: PropTypes.any.isRequired,
   /** Text displayed on label */
   text: PropTypes.string,
+  /** onClick function */
+  onClick: PropTypes.func,
 }
 
 /**
  * Circle button
  * 
  */
-function CircleButton ({icon, text}) {
+function CircleButton ({icon, text, onClick}) {
   return (
-    <div className="button--circle" aria-label={text}>
+    <div className="button--circle" aria-label={text} onClick={onClick}>
       <img src={icon} alt={text} className="button__img" />
     </div>
   );

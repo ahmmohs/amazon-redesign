@@ -6,6 +6,30 @@
   margin: 8px;
   box-shadow: 0px 3px 5px -2px #ccc;
   transition: .2s ease;
+  position: relative;
+}
+
+.quantity__wrapper {
+  position: absolute;
+  background: transparent;
+  background: #ff9d0c;
+  padding: 6px;
+  font-size: 12px;
+  left: 0px;
+  top: 16px;
+  color: #fff;
+}
+
+.quantity__wrapper::after {
+  content: '';
+  width: 10px;
+  height: 26px;
+  border-right: 10px solid transparent;
+  border-top: 26px solid #ff9d0c;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  right: -10px;
 }
 
 .product__wrapper:hover {
