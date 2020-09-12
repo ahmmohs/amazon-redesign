@@ -22,12 +22,12 @@ const reducer = (state, action) => {
     /** Remove product from cart */
     case 'REMOVE_FROM_CART':
       const index = state.cart.findIndex((cartItem) => cartItem.id === action.id);
-      console.log(index);
+      let newCart = [...state.cart];
       if (index >= 0 && state.cart.length > 0) {
-        let newCart = state.cart;
+        newCart.splice(index, 1);
         return {
           ...state,
-          cart: newCart.splice(index, 1),
+          cart: newCart,
           totalQuantity: newCart.reduce((a, b) => a + (b.count), 0),
         }
       }
