@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 
 import '../styles/login.css';
+
 import Button from './Buttons/Button';
+import { useHistory } from 'react-router-dom';
+
+import { auth } from '../config/firebase';
 
 function Login ({}) {
   const [signingUp, setSigningUp] = useState(false);
@@ -14,6 +18,8 @@ function Login ({}) {
     fName: '',
     lName: ''
   });
+
+  const history = useHistory();
 
   /** Handle input change and update state */
   const handleChange = (e, key) => {
@@ -56,11 +62,29 @@ function Login ({}) {
     setError('');
     /** Register user */
     if (signingUp) {
-      
-
+      auth
+        .createUserWithEmailAndPassword(formData.email, formData.password)
+        .then((res) => {
+          if (res) {
+            res.user.updateProfile({displayName: formData.fName})
+              .then(() => {
+                history.push('/');
+              })
+              .catch(err => setError(err.message));
+          }
+        })
+        .catch(err => setError(err.message));
+        
     /** Login */
     } else {
-
+      auth
+        .signInWithEmailAndPassword(formData.email, formData.password)
+        .then((res) => {
+          if (res) {
+            history.push('/')
+          }
+        })
+        .catch(err => setError(err.message));
     }
   }
 

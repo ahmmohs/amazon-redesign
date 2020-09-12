@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { useStateValue } from '../StateProvider';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { auth } from '../config/firebase';
 
 import logo from '../assets/logo.png';
 import searchIcon from '../assets/search.svg';
@@ -12,7 +13,17 @@ import cartIcon from '../assets/cart.svg';
  * 
  */
 function Navbar ({ setSidebar, sidebarOpen }) {
-  const [{ totalQuantity }] = useStateValue();
+  const [{ totalQuantity, user }] = useStateValue();
+  const history = useHistory();
+
+  /** Sign in or out the user */
+  const handleAuth = () => {
+    if (user) {
+      auth.signOut();
+    } else {
+      history.push('/login')
+    }
+  }
 
   return (
     <div className="navbar__wrapper">
@@ -32,12 +43,10 @@ function Navbar ({ setSidebar, sidebarOpen }) {
         </div>
         {/* Links */}
         <div className="nav__links">
-          <Link to="/login">
-            <div className="nav__link">
-              <div className="nav__link--small">Hello,</div>
-              <div className="nav__link--bold">Sign in</div>
-            </div>
-          </Link>
+          <div className="nav__link" onClick={() => handleAuth()}>
+            <div className="nav__link--small">Hello, {user?.displayName}</div>
+            <div className="nav__link--bold">{user ? 'Sign out' : 'Sign in'}</div>
+          </div>
           <div className="nav__link">
             <div className="nav__link--small">Returns</div>
             <div className="nav__link--bold">& Orders</div>

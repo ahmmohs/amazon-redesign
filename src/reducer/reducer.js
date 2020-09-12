@@ -1,6 +1,7 @@
 export const initialState = {
   cart: [],
   totalQuantity: 0,
+  user: null,
 }
 
 const reducer = (state, action) => {
@@ -12,6 +13,7 @@ const reducer = (state, action) => {
         cart: [...state.cart, {...action.item, count: 1}],
         totalQuantity: state.totalQuantity + 1,
       }
+      
     /** Add product already in cart */
     case 'ADD_DUP_TO_CART':
       state.cart[action.index] = action.item;
@@ -19,6 +21,7 @@ const reducer = (state, action) => {
         ...state,
         totalQuantity: state.cart.reduce((a, b) => a + (b.count), 0),
       }
+
     /** Remove product from cart */
     case 'REMOVE_FROM_CART':
       const index = state.cart.findIndex((cartItem) => cartItem.id === action.id);
@@ -32,6 +35,13 @@ const reducer = (state, action) => {
         }
       }
       return state;
+
+    /** Set the user */
+    case 'SET_USER':
+      return {
+        ...state,
+        user: action.user,
+      }
     default:
       return state;
   }
