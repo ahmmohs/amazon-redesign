@@ -4,10 +4,15 @@ import Product from './Product';
 
 import carot from '../assets/carot.svg';
 
+/**
+ * Small product section used on Landing Page
+ * 
+ * @param {props} props category, title
+ */
 function ProductSection({category, title}) {
-
   return (
     <div className="product__section">
+      {/* Product Section Header */}
       <div className="section__header">
         <div className="section__title">{title}</div>
         <div className="section__more">
@@ -15,6 +20,7 @@ function ProductSection({category, title}) {
           <img src={carot} alt="" className="section__carot"/>
         </div>
       </div>
+      {/* Map products to row */}
       <div className="product__row">
         <Product
           title="Apple Airpods"
@@ -42,8 +48,7 @@ function ProductSection({category, title}) {
         />
       </div>
     </div>
-  )
-
+  );
 }
 
 export default ProductSection;

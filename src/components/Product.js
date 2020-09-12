@@ -2,13 +2,16 @@ import React from 'react';
 
 import '../styles/product.css';
 
+import CircleButton from './Buttons/CircleButton';
+
 import ratingStar from '../assets/star.svg';
-import wishlist from '../assets/wishlist.svg';
 import add from '../assets/add.svg';
 
-import Button from './Button';
-import CircleButton from './CircleButton';
-
+/**
+ * Product component
+ * 
+ * @param {props} props title, price, rating, image
+ */
 function Product ({title, price, rating, image}) {
 
   return (

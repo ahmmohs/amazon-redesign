@@ -1,7 +1,11 @@
 import React from 'react';
 
+/**
+ * Regular button
+ * 
+ * @param {props} param0 text, color, isImage, image
+ */
 function Button ({text, color, isImage, image}) {
-
   return (
     <div className={`button button--${color}`}>
       {
@@ -12,8 +16,7 @@ function Button ({text, color, isImage, image}) {
         )
       }
     </div>
-  )
-
+  );
 }
 
 export default Button;

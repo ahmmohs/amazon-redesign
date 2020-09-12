@@ -1,8 +1,9 @@
 import React from 'react';
-import './styles/styles.css'
 
 import Navbar from './components/Navbar';
 import Landing from './components/Landing';
+
+import './styles/styles.css'
 
 function App() {
   return (
