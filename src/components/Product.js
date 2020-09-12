@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import '../styles/product.css';
 
@@ -7,10 +8,27 @@ import CircleButton from './Buttons/CircleButton';
 import ratingStar from '../assets/star.svg';
 import add from '../assets/add.svg';
 
+const propTypes = {
+  /** Product name */
+  title: PropTypes.string.isRequired,
+  /** Product price */
+  price: PropTypes.number.isRequired,
+  /** Product rating */
+  rating: PropTypes.number.isRequired,
+  /** Product image */
+  image: PropTypes.string.isRequired,
+}
+
+const defaultProps = {
+  title: "Product Title",
+  price: "999.99",
+  rating: 0,
+  image: null,
+}
+
 /**
  * Product component
  * 
- * @param {props} props title, price, rating, image
  */
 function Product ({title, price, rating, image}) {
 
@@ -35,5 +53,8 @@ function Product ({title, price, rating, image}) {
   );
 
 }
+
+Product.propTypes = propTypes;
+Product.defaultProps = defaultProps;
 
 export default Product;

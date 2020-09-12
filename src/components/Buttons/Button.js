@@ -1,22 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types'
+
+const propTypes = {
+  /** Text displayed on button */
+  text: PropTypes.string.isRequired,
+  /** Color of the button */
+  color: PropTypes.string.isRequired,
+  /** onClick function */
+  onClick: PropTypes.func.isRequired,
+}
 
 /**
  * Regular button
  * 
- * @param {props} param0 text, color, isImage, image
  */
-function Button ({text, color, isImage, image}) {
+function Button ({text, color, onClick}) {
   return (
-    <div className={`button button--${color}`}>
-      {
-        isImage ? (
-          <img src={image} alt={text} className="button__img"/>
-        ) : (
-          text
-        )
-      }
+    <div className={`button button--${color}`} onClick={onClick}>
+      {text}
     </div>
   );
 }
+
+Button.propTypes = propTypes;
 
 export default Button;

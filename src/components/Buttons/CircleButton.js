@@ -1,9 +1,16 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
+const propTypes = {
+  /** Icon within button */
+  icon: PropTypes.any.isRequired,
+  /** Text displayed on label */
+  text: PropTypes.string,
+}
 
 /**
  * Circle button
  * 
- * @param {props} props icon, text
  */
 function CircleButton ({icon, text}) {
   return (
@@ -12,5 +19,7 @@ function CircleButton ({icon, text}) {
     </div>
   );
 }
+
+CircleButton.propTypes = propTypes;
 
 export default CircleButton;

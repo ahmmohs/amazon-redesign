@@ -1,13 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Product from './Product';
 
 import carot from '../assets/carot.svg';
 
+const propTypes = {
+  /** The category to make api call with */
+  category: PropTypes.string,
+  /** Title displayed on page */
+  title: PropTypes.string.isRequired,
+}
+
 /**
  * Small product section used on Landing Page
  * 
- * @param {props} props category, title
  */
 function ProductSection({category, title}) {
   return (
@@ -50,5 +57,7 @@ function ProductSection({category, title}) {
     </div>
   );
 }
+
+ProductSection.propTypes = propTypes;
 
 export default ProductSection;
