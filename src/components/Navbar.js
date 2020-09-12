@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useStateValue } from '../StateProvider';
+import { Link } from 'react-router-dom';
 
 import logo from '../assets/logo.png';
 import searchIcon from '../assets/search.svg';
@@ -10,16 +11,18 @@ import cartIcon from '../assets/cart.svg';
  * Navigation component.
  * 
  */
-function Navbar({ setSidebar, sidebarOpen }) {
+function Navbar ({ setSidebar, sidebarOpen }) {
   const [{ totalQuantity }] = useStateValue();
 
-  return(
+  return (
     <div className="navbar__wrapper">
       <div className="navbar">
         {/* Logo */}
-        <div className="nav__logo__wrapper">
-          <img src={logo} alt="" className="nav__logo"/>
-        </div>
+        <Link to="/">
+          <div className="nav__logo__wrapper">
+            <img src={logo} alt="" className="nav__logo"/>
+          </div>
+        </Link>
         {/* Searchbar */}
         <div className="searchbar__wrapper">
           <input type="text" className="searchbar__input" />
@@ -29,10 +32,12 @@ function Navbar({ setSidebar, sidebarOpen }) {
         </div>
         {/* Links */}
         <div className="nav__links">
-          <div className="nav__link">
-            <div className="nav__link--small">Hello,</div>
-            <div className="nav__link--bold">Sign in</div>
-          </div>
+          <Link to="/login">
+            <div className="nav__link">
+              <div className="nav__link--small">Hello,</div>
+              <div className="nav__link--bold">Sign in</div>
+            </div>
+          </Link>
           <div className="nav__link">
             <div className="nav__link--small">Returns</div>
             <div className="nav__link--bold">& Orders</div>

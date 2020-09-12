@@ -20,7 +20,7 @@ const propTypes = {
  * Sidebar cart display
  *  
  */
-function Sidebar({ open, setSidebar }) {
+function Sidebar ({ open, setSidebar }) {
   const [{ cart }] = useStateValue();
 
   return (
@@ -29,7 +29,7 @@ function Sidebar({ open, setSidebar }) {
         {/* Map Products in Cart */}
         <div className="sidebar__header">Your cart
           <div className="sidebar__icon__wrapper" onClick={() => setSidebar(!open)}>
-            <img src={closeIcon} alt="" className="sidebar__icon"/>
+            <img src={closeIcon} alt="" className="sidebar__icon" />
           </div>
         </div>
         {

@@ -11,16 +11,16 @@ import headerImg from '../assets/header.jpg';
  *
  */
 function Landing () {
-  return(
+  return (
     <div className="landing__wrapper">
       {/* Header */}
-      <img src={headerImg} alt="" className="header__image"/>
+      <img src={headerImg} alt="" className="header__image" />
       {/* Featured product sections */}
       <ProductSection category="hotDeals" title="Hot Deals" />
       <ProductSection category="recommended" title="Recommended for You" />
       <ProductSection category="bestSellers" title="Best Sellers" />
     </div>
-  )
+  );
 }
 
 export default Landing;

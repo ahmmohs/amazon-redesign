@@ -16,7 +16,7 @@ const propTypes = {
  * Small product section used on Landing Page
  * 
  */
-function ProductSection({category, title}) {
+function ProductSection ({category, title}) {
   return (
     <div className="product__section">
       {/* Product Section Header */}
