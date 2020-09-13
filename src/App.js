@@ -8,6 +8,7 @@ import Landing from './components/Landing';
 import Sidebar from './components/Sidebar';
 import Login from './components/Login';
 import CheckoutPage from './components/Checkout';
+import Orders from './components/Orders';
 
 import { auth } from './config/firebase';
 import { useStateValue } from './StateProvider';
@@ -48,6 +49,9 @@ function App () {
             <Elements stripe={promise}>
               <CheckoutPage />
             </Elements>
+          </Route>
+          <Route path="/orders">
+            <Orders />
           </Route>
         </Switch>
         <Sidebar open={sidebarOpen} setSidebar={setSidebarOpen} />

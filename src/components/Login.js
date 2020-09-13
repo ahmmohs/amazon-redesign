@@ -140,8 +140,15 @@ function Login () {
           <Button text={signingUp ? 'Sign up' : 'Log in'} color="orange" onClick={handleSubmit} />  
           <div style={error ? {marginTop: '16px'} : {marginTop: '0px'}}className="error__message">{error}</div>
           <div className="signup__text">
-            Don't have an account?
-            <span className="signup__link" onClick={() => {setSigningUp(true);}}>Sign up.</span>
+            {signingUp ? 'Already have an account?' : "Don't have an account?"}
+            <span
+              className="signup__link"
+              onClick={() => {
+                signingUp ? setSigningUp(false) : setSigningUp(true);
+              }}
+            >
+              {signingUp ? 'Log in.' : 'Sign up.'}
+            </span>
           </div>
         </div>
       </div>

@@ -42,6 +42,8 @@ function CheckoutInputs () {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
   const [clientSecret, setClientSecret] = useState(null);
+  const [addresses, setAddresses] = useState([]);
+  const [payments, setPayments] = useState([]);
 
   const [{ cart, user }, dispatch] = useStateValue();
 
@@ -62,16 +64,27 @@ function CheckoutInputs () {
     }).then((res) => {
       if (res.hasOwnProperty('paymentIntent')) {
 
+        /* Add the order to the users order collection */
         db
           .collection('users')
           .doc(user?.uid)
           .collection('orders')
-          .document(res.paymentIntent.id)
+          .doc(res.paymentIntent.id)
           .set({
             cart,
             amount: res.paymentIntent.amount,
             created: res.paymentIntent.created
-          })
+          });
+        
+        /* Save the payment method for the user */
+        db
+          .collection('users')
+          .doc(user?.uid)
+          .collection('methods')
+          .doc(res.paymentIntent.payment_method)
+          .set({
+            paymentMethod: res.paymentIntent.payment_method
+          });
 
         setError('');
         setProcessing(false);
@@ -96,10 +109,25 @@ function CheckoutInputs () {
       db
         .collection('users')
         .doc(user?.uid)
-        .collection('addresses')
-        .onSnapshot(address => (
-          console.log(address)
-        ))
+        .collection('methods')
+        .onSnapshot(methods => {
+          methods.forEach(method => {
+            getPayments(method.data().paymentMethod);
+          })
+        })
+    }
+
+    /* Get payment method details */
+    const getPayments = async (method) => {
+      const res = await axios({
+        method: 'post',
+        url: `method/get?pm=${method}`
+      });
+      console.log(res.data);
+      setPayments([...payments, {
+        lastFour: res.data.last4,
+        brand: res.data.brand,
+      }]);
     }
 
     /* Get client secret whenever price of cart is updated */
@@ -111,7 +139,9 @@ function CheckoutInputs () {
       setClientSecret(res.data.clientSecret);
     }
     getClientSecret();
-  }, [cart])
+  }, [cart]);
+
+  console.log(payments);
 
   return (
     <div className="checkout__inputs">

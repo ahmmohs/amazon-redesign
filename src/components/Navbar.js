@@ -47,7 +47,7 @@ function Navbar ({ setSidebar, sidebarOpen }) {
             <div className="nav__link--small">Hello, {user?.displayName}</div>
             <div className="nav__link--bold">{user ? 'Sign out' : 'Sign in'}</div>
           </div>
-          <div className="nav__link">
+          <div className="nav__link" onClick={() => history.push('/orders')}>
             <div className="nav__link--small">Returns</div>
             <div className="nav__link--bold">& Orders</div>
           </div>
