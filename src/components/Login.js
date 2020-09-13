@@ -7,7 +7,11 @@ import { useHistory } from 'react-router-dom';
 
 import { auth } from '../config/firebase';
 
-function Login ({}) {
+/**
+ * Login page component
+ * 
+ */
+function Login () {
   const [signingUp, setSigningUp] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -92,6 +96,7 @@ function Login ({}) {
     <div className="login__wrapper">
       <div className="login__container">
         <div className="login__right">
+          {/* Display only email & password input if !signingUp */}
           <div className="login__subheader login__subheader--bold">{signingUp ? 'Sign up' : 'Log in'}</div>
           <div className="input__description">Email</div>
           <input
@@ -109,6 +114,7 @@ function Login ({}) {
             onChange={(e) => handleChange(e, 'password')}
             style={!signingUp ? {marginBottom: '16px'} : {marginBottom: '0px'}}
           />
+          {/* Display additional input if signingUp */}
           {
             signingUp &&
               (

@@ -9,10 +9,15 @@ import {
 } from '@stripe/react-stripe-js';
 import { Link, useHistory} from 'react-router-dom';
 import { useStateValue } from '../../StateProvider';
+
 import axios from '../../reducer/axios';
+import { db } from '../../config/firebase';
 
 import returnIcon from '../../assets/return.svg';
 
+/**
+ * Stripe element style options
+ */
 const options = {
   style: {
     base: {
@@ -24,51 +29,94 @@ const options = {
   }
 }
 
+/**
+ * Checkout inputs component, all the inputs required
+ * for checkout
+ * 
+ */
 function CheckoutInputs () {
   const stripe = useStripe();
   const elements = useElements();
   const history = useHistory();
 
   const [processing, setProcessing] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [clientSecret, setClientSecret] = useState(null);
 
-  const [{ cart }, dispatch] = useStateValue();
+  const [{ cart, user }, dispatch] = useStateValue();
 
+  /**
+   * Handle payment submission
+   * 
+   * @param {any} e event
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setProcessing(true);
 
+    /* Get stripe paymentIntent payload */
     const payload = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: elements.getElement(CardNumberElement)
       }
-    }).then(({ paymentIntent }) => {
-      console.log(paymentIntent);
-      setSuccess(true);
-      setError('');
-      setProcessing(false);
+    }).then((res) => {
+      if (res.hasOwnProperty('paymentIntent')) {
 
-      history.replace('/orders');
-    })
+        db
+          .collection('users')
+          .doc(user?.uid)
+          .collection('orders')
+          .document(res.paymentIntent.id)
+          .set({
+            cart,
+            amount: res.paymentIntent.amount,
+            created: res.paymentIntent.created
+          })
+
+        setError('');
+        setProcessing(false);
+
+        /* Empty the cart */
+        dispatch({
+          type: 'EMPTY_CART'
+        });
+
+        /* Send them to orders page */
+        history.replace('/orders');
+      } else {
+        setProcessing(false);
+        setError('Error processing payment');
+      }
+    });
   }
 
   useEffect(() => {
+    /* Get the users payment */
+    if (user) {
+      db
+        .collection('users')
+        .doc(user?.uid)
+        .collection('addresses')
+        .onSnapshot(address => (
+          console.log(address)
+        ))
+    }
+
+    /* Get client secret whenever price of cart is updated */
     const getClientSecret = async () => {
-      const response = await axios({
+      const res = await axios({
         method: 'post',
         url: `/charge/create?total=${cart.reduce((a, b) => a + (b.price * b.count), 0).toFixed(2) * 100}`
       });
-      setClientSecret(response.data.clientSecret);
+      setClientSecret(res.data.clientSecret);
     }
-
     getClientSecret();
   }, [cart])
 
   return (
     <div className="checkout__inputs">
       <div className="input__title">Add new shipping address</div>
+      {/* Address */}
       <div className="input--full">
         <div className="input--half">
           <div className="input__description">First Name</div>
@@ -134,6 +182,7 @@ function CheckoutInputs () {
             {processing ? 'Processing Payment...' : 'Complete Order'}
           </button>
         </div>
+        <div className="error__message">{error}</div>
       </form>
     </div>
   );

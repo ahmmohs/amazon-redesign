@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import SidebarProduct from '../Sidebar/SidebarProduct';
 
 import { useStateValue } from '../../StateProvider';
 
+/**
+ * Display products in cart @ checkout
+ * 
+ */
 function CheckoutProducts () {
-  const [{ cart }, dispatch] = useStateValue();
+  const [{ cart }] = useStateValue();
 
   return (
     <div className="checkout__products">
       <div className="input__title" style={{marginBottom: '16px'}}>Products</div>
+      {/* Map products */}
       {
         cart.map((item, i) => (
           <SidebarProduct
@@ -22,6 +27,7 @@ function CheckoutProducts () {
         ))
       }
       <hr className="cart__divider" />
+      {/* Display total */}
       <div className="sidebar__subtotal">
         <div className="subtotal__title">Total: </div>
         <div>${cart.reduce((a, b) => a + (b.price * b.count), 0).toFixed(2)}</div>

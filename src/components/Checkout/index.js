@@ -5,6 +5,10 @@ import '../../styles/checkout.css';
 import CheckoutInputs from './CheckoutInputs';
 import CheckoutProducts from './CheckoutProducts';
 
+/**
+ * Checkout page component
+ * 
+ */
 function CheckoutPage () {
   return (
     <div className="checkout__wrapper">
