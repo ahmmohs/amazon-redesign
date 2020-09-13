@@ -31,7 +31,7 @@
 }
 
 .sidebar__product {
-  background: #f2f2f2;
+  background: #f5f5f5;
   padding: 8px 8px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -73,7 +73,6 @@
 }
 
 .sidebar__subtotal {
-  background: #f2f2f2;
   border-radius: 8px;
   padding: 8px 16px;
   display: flex;

@@ -16,6 +16,11 @@ a {
   color: inherit;
 }
 
+button {
+  border: none;
+  box-sizing: border-box;
+}
+
 .button {
   height: 32px;
   display: flex;
@@ -43,6 +48,11 @@ a {
 
 .button--blue {
   background: #232f3e;
+}
+
+.button--payment {
+  height: 48px;
+  font-size: 16px;
 }
 
 .button--circle {
@@ -93,6 +103,10 @@ a {
   width: 100%;
   box-sizing: border-box;
   transition: .2s ease;
+}
+
+.stripe__input {
+  padding-top: 12.5px;
 }
 
 .input:active {

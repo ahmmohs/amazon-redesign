@@ -7,6 +7,8 @@ import closeIcon from '../../assets/close_sidebar.svg';
 
 import SidebarProduct from './SidebarProduct';
 import Button from '../Buttons/Button';
+
+import { useHistory } from 'react-router-dom';
 import { useStateValue } from '../../StateProvider';
 
 const propTypes = {
@@ -22,6 +24,7 @@ const propTypes = {
  */
 function Sidebar ({ open, setSidebar }) {
   const [{ cart }] = useStateValue();
+  const history = useHistory();
 
   return (
     <div className={`sidebar ${open && 'sidebar--visible'}`}>
@@ -55,7 +58,10 @@ function Sidebar ({ open, setSidebar }) {
         <Button
           text="Checkout"
           color="orange"
-          onClick={() => {}}
+          onClick={() => {
+            history.push('/checkout');
+            setSidebar(false);
+          }}
         />
       </div>
     </div>
