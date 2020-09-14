@@ -10,5 +10,3 @@ Amazon looked a little outdated to me, so I decided to hop on dribbble, find [a 
 <b>Codestyle</b>
 - Airbnb React Styles
 - BEM CSS Styles
-
-## Features
