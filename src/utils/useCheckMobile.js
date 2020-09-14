@@ -4,14 +4,22 @@ export default function useCheckMobile() {
   const [isMobile, setMobile] = React.useState(false);
 
   React.useEffect(() => {
-    const userAgent =
-      typeof window.navigator === "undefined" ? "" : navigator.userAgent;
-    const mobile = Boolean(
-      userAgent.match(
-        /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
-      )
-    );
-    setMobile(mobile);
+    
+    const checkMobile = () => {
+      if (window.outerWidth <= 600) {
+        setMobile(true);
+      } else {
+        setMobile(false);
+      }
+    }
+    
+    checkMobile();
+    
+    window.addEventListener('resize', checkMobile);
+
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    }
   }, []);
 
   return { isMobile };

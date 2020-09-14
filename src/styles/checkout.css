@@ -165,13 +165,46 @@
 
   .checkout__container {
     width: 600px;
+    flex-direction: column-reverse;
   }
 
+  .checkout__products {
+    margin-left: 0px;
+  }
+
+  .subtotal__title {
+    font-size: 18px;
+  }
+
+  .input__title {
+    font-size: 14px;
+  }
+
+  .new__method {
+    font-size: 14px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
   .checkout__container {
     width: 500px;
+    flex-direction: column-reverse;
+  }
+
+  .checkout__products {
+    margin-left: 0px;
+  }
+
+  .subtotal__title {
+    font-size: 18px;
+  }
+
+  .input__title {
+    font-size: 14px;
+  }
+
+  .new__method {
+    font-size: 14px;
   }
 }
 
@@ -183,7 +216,6 @@
   .checkout__container {
     width: 343px;
     flex-direction: column-reverse;
-    
   }
 
   .checkout__products {
