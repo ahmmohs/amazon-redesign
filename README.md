@@ -14,7 +14,7 @@ Amazon looked a little outdated to me, so I decided to hop on dribbble, find [a 
 ## Features
 <b> Fully mobile responsive </b>
 
-![](https://i.gyazo.com/5ef7e30338057a34a393b2f4e42c3f2d.gif)
+![](https://i.gyazo.com/d0d3ff7ac8db8cb9a65d0f31e92b41e3.gif)
 
 <b> Brand new landing page </b>
 
