@@ -100,9 +100,9 @@ function Navbar ({ setSidebar, sidebarOpen }) {
               </div>
             </Route>
           </Switch>
-          <div className="footer__button bold" onClick={() => handleAuth()}>
+          <div className={`footer__button bold`} onClick={() => handleAuth()}>
             <img src={userIcon} alt="" className="footer__icon"/>
-            {user? user?.displayName : 'Sign in'}
+            {user ? user?.displayName : <div>Sign in</div>}
             <div className={`user__options ${dropdown && 'user__options--open'}`} ref={wrapper}>
               <div onClick={() => {
                 auth.signOut();

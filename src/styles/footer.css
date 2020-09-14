@@ -26,6 +26,10 @@
   position: relative;
 }
 
+.small {
+  font-size: 12px;
+}
+
 .footer__icon {
   height: 14px;
   margin-right: 8px;

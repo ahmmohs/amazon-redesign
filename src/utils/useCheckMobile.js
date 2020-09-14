@@ -4,8 +4,8 @@ export default function useCheckMobile() {
   const [isMobile, setMobile] = React.useState(false);
 
   React.useEffect(() => {
-    
     const checkMobile = () => {
+      console.log(window.outerWidth);
       if (window.outerWidth <= 600) {
         setMobile(true);
       } else {

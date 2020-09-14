@@ -124,7 +124,8 @@
   .sidebar {
     top: 80px;
     z-index: 2;
-    height: calc(100vh - 80px);
+    height: calc(100vh - 160px);
+    box-shadow: -1px 0px 1px 0px rgba(0, 0, 0, 0.1);
   }
 
   .sidebar__subtotal {
