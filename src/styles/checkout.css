@@ -1,6 +1,6 @@
 .checkout__wrapper {
   width: 100%;
-  padding-top: 144px;
+  padding-top: 132px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,6 +15,11 @@
 .checkout__inputs {
   display: flex;
   flex-direction: column;
+  flex: 1;
+}
+
+.input__wrapper {
+  width: 100%;
 }
 
 .input--full {
@@ -88,4 +93,13 @@
   font-size: 12px;
   flex: 1;
   text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.bold {
+  font-weight: bold;
+  margin-right: 4px;
+  font-size: 14px;
 }
