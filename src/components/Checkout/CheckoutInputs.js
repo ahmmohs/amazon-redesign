@@ -68,18 +68,12 @@ function CheckoutInputs () {
   const [{ cart, user }, dispatch] = useStateValue();
 
   const deleteAddress = (id) => {
-    console.log('Hello');
-    if (addresses.length === 1) {
-      setUsingAddress(null);
-    }
     db
       .collection('users')
       .doc(user?.uid)
       .collection('addresses')
       .doc(id)
       .delete();
-    
-    
   }
 
   const deleteCard = (id) => {
@@ -351,9 +345,7 @@ function CheckoutInputs () {
           }
         })
     }
-  }, [payments, addresses, user]);
-
-  console.log(addresses);
+  }, [payments, user]);
 
   return (
     <div className="checkout__inputs">
