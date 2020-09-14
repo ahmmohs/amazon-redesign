@@ -13,16 +13,21 @@ Amazon looked a little outdated to me, so I decided to hop on dribbble, find [a 
 
 ## Features
 <b> Brand new landing page </b>
+
 ![](https://github.com/ahmmohs/amazon-redesign/blob/master/brandNewLanding.png?raw=true)
 
 <b> Easy add to cart </b>
+
 ![](https://i.gyazo.com/60c18885ed262f8feb6d3cc2ab245f85.gif)
 
 <b> Sign in input validation, and error displays </b>
+
 ![](https://i.gyazo.com/41f500acafc65c09910cb5a03ef1db69.gif)
 
 <b> Order, view orders, and use saved addresses/payment methods </b>
+
 ![](https://i.gyazo.com/050c138b87c07b242f800577f45046d9.gif)
 
 <b> Checkout input validation </b>
+
 ![](https://i.gyazo.com/12ac588aa075601e75c0b46f37a6cc1f.gif)
