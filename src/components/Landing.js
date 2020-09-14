@@ -1,10 +1,10 @@
 import React from 'react'; 
 
-import '../styles/landing.css';
-
 import ProductSection from './ProductSection';
 
 import headerImg from '../assets/header.jpg';
+
+import '../styles/landing.css';
 
 /**
  * Homepage landing component.

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import SidebarProduct from '../Sidebar/SidebarProduct';
-
 import { useStateValue } from '../../StateProvider';
+
+import SidebarProduct from '../Sidebar/SidebarProduct';
 
 /**
  * Display products in cart @ checkout

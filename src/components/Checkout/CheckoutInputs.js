@@ -9,12 +9,12 @@ import {
 } from '@stripe/react-stripe-js';
 import { Link, useHistory} from 'react-router-dom';
 import { useStateValue } from '../../StateProvider';
-
 import axios from '../../reducer/axios';
 import { db } from '../../config/firebase';
 
-import returnIcon from '../../assets/return.svg';
 import SavedCheckoutInput from './SavedCheckoutInput';
+
+import returnIcon from '../../assets/return.svg';
 
 /**
  * Stripe element style options
@@ -144,7 +144,7 @@ function CheckoutInputs () {
     
       const charge = await axios({
         method: 'post',
-        url: 'charge/charge',
+        url: 'charge/create',
         data: {
           customer: customer.data.customer.id,
           price: cart.reduce((a, b) => a + (b.price * b.count), 0).toFixed(2) * 100,
@@ -204,7 +204,7 @@ function CheckoutInputs () {
 
       const charge = await axios({
         method: 'post',
-        url: 'charge/charge',
+        url: 'charge/create',
         data: {
           customer: customerId,
           price: cart.reduce((a, b) => a + (b.price * b.count), 0).toFixed(2) * 100,
@@ -291,8 +291,8 @@ function CheckoutInputs () {
               addresses.map((addy, i) => (
                 <SavedCheckoutInput
                   title={`${addy.fName} ${addy.lName}`}
-                  subtitle=''
-                  description={`${addy.line1} ${addy.line2}, ${addy.state} ${addy.postal_code}`}
+                  subtitle={`${addy.line1} ${addy.line2},`}
+                  description={`${addy.state} ${addy.postal_code}`}
                   currentlySelected={usingPayment}
                   index={i}
                   selectFn={setUsingPayment}

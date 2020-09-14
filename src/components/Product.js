@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import '../styles/product.css';
+import { useStateValue } from '../StateProvider';
 
 import CircleButton from './Buttons/CircleButton';
-import { useStateValue } from '../StateProvider';
 
 import ratingStar from '../assets/star.svg';
 import add from '../assets/add.svg';
+
+import '../styles/product.css';
 
 const propTypes = {
   /** Product ID */

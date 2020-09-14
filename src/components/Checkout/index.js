@@ -1,12 +1,12 @@
 import React from 'react';
 
-import '../../styles/checkout.css';
-
 import { useStateValue } from '../../StateProvider';
 import { Link } from 'react-router-dom';
 
 import CheckoutInputs from './CheckoutInputs';
 import CheckoutProducts from './CheckoutProducts';
+
+import '../../styles/checkout.css';
 
 /**
  * Checkout page component

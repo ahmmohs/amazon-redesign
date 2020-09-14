@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import '../styles/login.css';
+import { useHistory } from 'react-router-dom';
+import { auth } from '../config/firebase';
 
 import Button from './Buttons/Button';
-import { useHistory } from 'react-router-dom';
 
-import { auth } from '../config/firebase';
+import '../styles/login.css';
 
 /**
  * Login page component

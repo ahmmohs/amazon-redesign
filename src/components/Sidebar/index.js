@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import '../../styles/sidebar.css';
-
-import closeIcon from '../../assets/close_sidebar.svg';
+import { useHistory } from 'react-router-dom';
+import { useStateValue } from '../../StateProvider';
 
 import SidebarProduct from './SidebarProduct';
 import Button from '../Buttons/Button';
 
-import { useHistory } from 'react-router-dom';
-import { useStateValue } from '../../StateProvider';
+import closeIcon from '../../assets/close_sidebar.svg';
+
+import '../../styles/sidebar.css';
 
 const propTypes = {
   /** If the sidebar is open */
