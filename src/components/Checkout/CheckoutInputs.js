@@ -76,8 +76,24 @@ function CheckoutInputs () {
       .delete();
   }
 
-  const deleteCard = (id) => {
+  const deleteCard = async (id) => {
+    const customer = await axios({
+      method: 'post',
+      url: 'customer/delete',
+      data: {
+        cardId: id,
+        customerId
+      }
+    });
 
+    console.log(customer.data);
+
+    db
+      .collection('users')
+      .doc(user?.uid)
+      .collection('sources')
+      .doc(customerId)
+      .set(customer.data)
   }
 
   /**
@@ -153,7 +169,7 @@ function CheckoutInputs () {
     
      setProcessing(true);
 
-    if (payments.length === 0) {
+    if (customerId === null) {
       const card = elements.getElement(CardNumberElement);
       const token = await stripe.createToken(card, {name: cardComplete.cardHolder})
   
@@ -217,7 +233,6 @@ function CheckoutInputs () {
         setError('Error processing payment');
       }
     } else {
-
       let customer = {};
       let source = '';
       if (usingPayment == null) {
@@ -258,7 +273,9 @@ function CheckoutInputs () {
             created: charge.data.created
           });
 
+        console.log(addresses.length, usingAddress);
         if ((addresses.length > 0 && usingAddress === null) || addresses.length === 0) {
+          console.log('Adding address for some reason??');
           db
             .collection('users')
             .doc(user?.uid)
@@ -267,7 +284,9 @@ function CheckoutInputs () {
             .set(address);
         }
 
-        if (payments.length > 0 && usingPayment === null) {
+        console.log(payments.length, usingPayment)
+        if ((payments.length > 0 && usingPayment === null) || payments.length === 0) {
+          console.log('Updating customer info!!');
           db
             .collection('users')
             .doc(user?.uid)
@@ -294,8 +313,10 @@ function CheckoutInputs () {
   }
 
   useEffect(() => {
-    /* Get the users payment methods*/
-    if (user && payments.length === 0) {
+    /* If user is signed in, check for their payment methods/addresses */
+    if (user) {
+
+      /* Get payment methods */
       db
         .collection('users')
         .doc(user?.uid)
@@ -304,22 +325,34 @@ function CheckoutInputs () {
           if (ids.docs.length > 0) {
             const costumer = ids.docs[0].data();
             setCustomerId(costumer.id);
-            setPayments(costumer.sources.data.map(source => ({
-              id: source.id,
-              lastFour: source.last4,
-              brand: source.brand,
-              name: source.name
-            })));
-            setUsingPayment(0);
-            setCardComplete({
-              cardCvc: true,
-              cardDate: true,
-              cardHolder: 'f',
-              cardNumber: true
-            });
+            if (costumer.sources.data.length > 0) {
+              setPayments(costumer.sources.data.map(source => ({
+                id: source.id,
+                lastFour: source.last4,
+                brand: source.brand,
+                name: source.name
+              })));
+              setUsingPayment(0);
+              setCardComplete({
+                cardCvc: true,
+                cardDate: true,
+                cardHolder: 'f',
+                cardNumber: true
+              });
+            } else {
+              setPayments([]);
+              setUsingPayment(null);
+              setCardComplete({
+                cardCvc: false,
+                cardDate: false,
+                cardHolder: '',
+                cardNumber: false
+              });
+            }
           }
         })
       
+      /* Get addresses */
       db
         .collection('users')
         .doc(user?.uid)
@@ -343,9 +376,9 @@ function CheckoutInputs () {
               postal_code: ''
             });
           }
-        })
+        });
     }
-  }, [payments, user]);
+  }, [user]);
 
   return (
     <div className="checkout__inputs">
@@ -489,7 +522,7 @@ function CheckoutInputs () {
                   currentlySelected={usingPayment}
                   index={i}
                   selectFn={setUsingPayment}
-                  deleteFn={()=>{}}
+                  deleteFn={deleteCard}
                 />
               ))
             }
