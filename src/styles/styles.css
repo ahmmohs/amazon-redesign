@@ -333,6 +333,10 @@ button {
   .searchbar__wrapper {
     display: none;
   }
+  
+  .searchbar__input {
+    font-size: 12px;
+  }
 
   .nav__links {
     display: none;
@@ -344,6 +348,19 @@ button {
 
   .nav__categories {
     display: none;
+  }
+
+  .input {
+    border: none;
+  }
+
+  .input:focus {
+    border: none;
+  }
+  
+  .button {
+    box-sizing: border-box;
+    padding: 24px;
   }
 
 }

@@ -20,7 +20,6 @@ const promise = loadStripe('pk_test_NwFtJV1WamXhyTAeuU5WThTW');
 
 function App () {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const wrapper = useRef();
   const [, dispatch] = useStateValue();
 
   useEffect(() => {
@@ -38,8 +37,8 @@ function App () {
 
   return (
     <Router>
-      <div className="App" ref={wrapper}>
-        <Navbar setSidebar={setSidebarOpen} sidebarOpen={sidebarOpen} wrapper={wrapper} />
+      <div className="App">
+        <Navbar setSidebar={setSidebarOpen} sidebarOpen={sidebarOpen} />
         <Switch>
           <Route path="/" exact>
             <Landing />
@@ -58,7 +57,7 @@ function App () {
         </Switch>
         <Sidebar open={sidebarOpen} setSidebar={setSidebarOpen} />
         {/*Categories/Products Display*/}
-        <MobileFooter />
+        <MobileFooter setSidebar={setSidebarOpen} sidebarOpen={sidebarOpen} />
       </div>
     </Router>
   );

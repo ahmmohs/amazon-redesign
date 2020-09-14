@@ -152,3 +152,53 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+@media only screen and (max-width: 1200px) {
+
+  .checkout__container {
+    width: 800px;
+  }
+
+}
+
+@media only screen and (max-width: 1024px) {
+
+  .checkout__container {
+    width: 600px;
+  }
+
+}
+
+@media only screen and (max-width: 768px) {
+  .checkout__container {
+    width: 500px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .checkout__wrapper {
+    padding-top: 112px;
+  }
+
+  .checkout__container {
+    width: 343px;
+    flex-direction: column-reverse;
+    
+  }
+
+  .checkout__products {
+    margin-left: 0px;
+  }
+
+  .subtotal__title {
+    font-size: 18px;
+  }
+
+  .input__title {
+    font-size: 14px;
+  }
+
+  .new__method {
+    font-size: 14px;
+  }
+}

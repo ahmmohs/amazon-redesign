@@ -56,6 +56,10 @@
   box-sizing: border-box;
 }
 
+.searchbar__wrapper--mobile {
+  display: none;
+}
+
 @media only screen and (max-width: 600px) {
 
   .landing__wrapper {
@@ -77,6 +81,30 @@
 
   .section__title {
     font-size: 20px;
+  }
+
+  .searchbar__wrapper--mobile {
+    flex: 1;
+    padding: 24px 16px 32px 16px;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .searchbar__button--mobile {
+    height: 100%;
+    width: 60px;
+    background: #f2f2f2;
+    height: 40px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: .2s ease;
   }
 
 }

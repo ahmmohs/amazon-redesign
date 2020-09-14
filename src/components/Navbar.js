@@ -66,7 +66,7 @@ function Navbar ({ setSidebar, sidebarOpen }) {
         </Link>
         {/* Searchbar */}
         <div className="searchbar__wrapper">
-          <input type="text" className="searchbar__input" />
+          <input type="text" className="searchbar__input" placeholder="Search... (chargers, headphones, etc.)" />
           <div className="searchbar__button">
             <img src={searchIcon} alt="" className="searchbar__icon"/>
           </div>
@@ -102,7 +102,7 @@ function Navbar ({ setSidebar, sidebarOpen }) {
           </Switch>
           <div className="footer__button bold" onClick={() => handleAuth()}>
             <img src={userIcon} alt="" className="footer__icon"/>
-            {user? user?.displayName : 'Guest'}
+            {user? user?.displayName : 'Sign in'}
             <div className={`user__options ${dropdown && 'user__options--open'}`} ref={wrapper}>
               <div onClick={() => {
                 auth.signOut();

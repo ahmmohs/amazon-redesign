@@ -49,5 +49,9 @@
   .mobile__footer {
     display: flex;
   }
+  
+  .footer {
+    height: 80px;
+  }
 
 }

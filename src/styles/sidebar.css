@@ -119,3 +119,15 @@
   height: 1px;
   border: none;
 }
+
+@media only screen and (max-width: 600px) { 
+  .sidebar {
+    top: 80px;
+    z-index: 2;
+    height: calc(100vh - 80px);
+  }
+
+  .sidebar__subtotal {
+    padding: 0px;
+  }
+}
