@@ -10,7 +10,7 @@
   width: 100%;
   z-index: -1;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
-  margin-bottom: -48px;
+  margin-bottom: -248px;
 }
 
 .product__section {

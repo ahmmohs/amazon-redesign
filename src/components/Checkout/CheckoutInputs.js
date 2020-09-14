@@ -49,9 +49,11 @@ function CheckoutInputs () {
     line2: '',
     country: '',
     state: '',
+    city: '',
     postal_code: ''
   });
   const [addresses, setAddresses] = useState([]);
+  const [usingAddress, setUsingAddress] = useState(null);
 
   const [customerId, setCustomerId] = useState(null);
   const [payments, setPayments] = useState([]);
@@ -62,9 +64,27 @@ function CheckoutInputs () {
     cardCvc: false,
   });
   const [usingPayment, setUsingPayment] = useState(null);
-  const [clientSecret, setClientSecret] = useState(null);
 
   const [{ cart, user }, dispatch] = useStateValue();
+
+  const deleteAddress = (id) => {
+    console.log('Hello');
+    if (addresses.length === 1) {
+      setUsingAddress(null);
+    }
+    db
+      .collection('users')
+      .doc(user?.uid)
+      .collection('addresses')
+      .doc(id)
+      .delete();
+    
+    
+  }
+
+  const deleteCard = (id) => {
+
+  }
 
   /**
    * Handles address inputs
@@ -76,6 +96,10 @@ function CheckoutInputs () {
     setAddress({...address, [key]: e.target.value});
   }
 
+  /**
+   * Validates stripe elements
+   * 
+   */
   const handleCard = (e) => {
     if (e.complete) {
       switch (e.elementType) {
@@ -94,6 +118,11 @@ function CheckoutInputs () {
     }
   }
 
+  const handleAddress = (i) => {
+    setUsingAddress(i);
+    setAddress(addresses[i]);
+  }
+
   /**
    * Checks if form is ready to be submitted
    * 
@@ -105,6 +134,7 @@ function CheckoutInputs () {
       && address.line1 !== ''
       && address.country !== ''
       && address.state !== ''
+      && address.city !== ''
       && address.postal_code !== ''
       && cardComplete.cardNumber
       && cardComplete.cardDate
@@ -194,10 +224,20 @@ function CheckoutInputs () {
       }
     } else {
 
+      let customer = {};
       let source = '';
       if (usingPayment == null) {
         const card = elements.getElement(CardNumberElement);
-        source = await stripe.createToken(card)
+        source = await stripe.createToken(card, {name: cardComplete.cardHolder})
+        customer = await axios({
+          method: 'post',
+          url: 'customer/update',
+          data: {
+            customerId,
+            source,
+          }
+        });
+        source = customer.data.source.id;
       } else {
         source = payments[usingPayment].id;
       }
@@ -224,6 +264,23 @@ function CheckoutInputs () {
             created: charge.data.created
           });
 
+        if ((addresses.length > 0 && usingAddress === null) || addresses.length === 0) {
+          db
+            .collection('users')
+            .doc(user?.uid)
+            .collection('addresses')
+            .doc(`${address.fName}${address.lName}${Math.random() * 1000}`)
+            .set(address);
+        }
+
+        if (payments.length > 0 && usingPayment === null) {
+          db
+            .collection('users')
+            .doc(user?.uid)
+            .collection('sources')
+            .doc(customer.data.customer.id)
+            .set(customer.data.customer); 
+        }
         
         setError('');
         setProcessing(false);
@@ -274,35 +331,60 @@ function CheckoutInputs () {
         .doc(user?.uid)
         .collection('addresses')
         .onSnapshot(sAddresses => {
-          setAddresses(sAddresses.docs.map(addy => (addy.data())));
+          if (sAddresses.docs.length > 0) {
+            setAddresses(sAddresses.docs.map(addy => ({...addy.data(), id: addy.id})));
+            setUsingAddress(0);
+            setAddress(sAddresses.docs[0].data());
+          } else {
+            setAddresses([]);
+            setUsingAddress(null);
+            setAddress({
+              fName: '',
+              lName: '',
+              line1: '',
+              line2: '',
+              country: '',
+              state: '',
+              city: '',
+              postal_code: ''
+            });
+          }
         })
     }
-  }, [payments, user]);
+  }, [payments, addresses, user]);
 
   console.log(addresses);
 
   return (
     <div className="checkout__inputs">
       {
-        (addresses.length > 0) ? (
+        (usingAddress !== null) ? (
           <div className="input__wrapper">
-            <div style={{marginTop: '16px'}} className="input__title">Select address</div>
+            <div className="input__title">
+              Select address
+              <div className="new__method" onClick={() => setUsingAddress(null)}>or add new address</div>
+            </div>
             {
               addresses.map((addy, i) => (
                 <SavedCheckoutInput
+                  id={addy.id}
                   title={`${addy.fName} ${addy.lName}`}
-                  subtitle={`${addy.line1} ${addy.line2},`}
+                  subtitle={`${addy.line1} ${addy.line2}`}
                   description={`${addy.state} ${addy.postal_code}`}
-                  currentlySelected={usingPayment}
+                  currentlySelected={usingAddress}
                   index={i}
-                  selectFn={setUsingPayment}
+                  selectFn={handleAddress}
+                  deleteFn={deleteAddress}
                 />
               ))
             }
           </div>
         ) : (
           <div>
-            <div className="input__title">Add new shipping address</div>
+            <div className="input__title">
+              Add new shipping address
+              {addresses.length > 0 && <div className="new__method" onClick={() => setUsingAddress(0)}>or select existing</div>}
+            </div>
             {/* Address */}
             <div className="input--full">
               <div className="input--half">
@@ -334,14 +416,28 @@ function CheckoutInputs () {
               placeholder="123 My Street"
               onChange={e => handleInput(e, 'line1')}
             />
-            <div className="input__description">Apartment, suite, etc (optional)</div>
-            <input
-              value={address.line2}
-              type="text"
-              className="input"
-              placeholder=""
-              onChange={e => handleInput(e, 'line2')}
-            />
+            <div className="input--full">
+              <div className="input--twird">
+                <div className="input__description">Apartment, suite, etc (optional)</div>
+                <input
+                  value={address.line2}
+                  type="text"
+                  className="input"
+                  placeholder=""
+                  onChange={e => handleInput(e, 'line2')}
+                />
+              </div>
+              <div className="input--third">
+                <div className="input__description">City</div>
+                <input
+                  value={address.city}
+                  type="text"
+                  className={(error !== '' && address.city === '') ? 'input input--error' : 'input'}
+                  placeholder=""
+                  onChange={e => handleInput(e, 'city')}
+                />
+              </div>
+            </div>
             <div className="input--full">
               <div className="input--third">
                 <div className="input__description">Country/Region</div>
@@ -380,25 +476,41 @@ function CheckoutInputs () {
       {/* Display payment form, if they want to add new payment method
           or else display the selector for the previous payment method */}
       {
-        (payments.length > 0 && usingPayment !== null) ? (
+        (usingPayment !== null) ? (
           <div>
-            <div style={{marginTop: '16px'}} className="input__title">Select payment method</div>
+            <div style={{marginTop: '16px'}} className="input__title">
+              Select payment method
+              <div className="new__method" onClick={() => {
+                setUsingPayment(null);
+                setCardComplete({...cardComplete, cardHolder: ''});
+              }}>
+                or add new method
+              </div>
+            </div>
             {
               payments.map((payment, i) => (
                 <SavedCheckoutInput
+                  id={payment.id}
                   title={payment.name}
                   subtitle={payment.brand}
                   description={`ending with ${payment.lastFour}`}
                   currentlySelected={usingPayment}
                   index={i}
                   selectFn={setUsingPayment}
+                  deleteFn={()=>{}}
                 />
               ))
             }
           </div>
         ) : (
           <div>
-            <div style={{marginTop: '16px'}} className="input__title">Add new payment method</div>
+            <div style={{marginTop: '16px'}} className="input__title">
+              Add new payment method
+              {payments.length > 0 && <div className="new__method" onClick={() => {
+                setUsingPayment(0);
+                setCardComplete({...cardComplete, cardHolder: 'f'});
+              }}>or select existing</div>}
+            </div>
             {/* Payment form */}
             <form onSubmit={handleSubmit}>
               <div className="input__description">Card number</div>

@@ -27,10 +27,36 @@ app.post('/charge/customer', async (req, res) => {
 });
 
 /**
+ * Update a customer
+ * 
+ */
+app.post('/customer/update', async (req, res) => {
+  const source = await stripe.customers.createSource(req.body.customerId, {source: req.body.source.token.id});
+  const customer = await stripe.customers.retrieve(req.body.customerId);
+
+  res.status(201).send({
+    customer,
+    source
+  });
+});
+
+/**
+ * Delete a source
+ * 
+ */
+app.post('/customer/delete', async (req, res) => {
+  await stripe.customers.deleteSource(req.body.customerId, req.body.cardId);
+  const customer = await stripe.customers.retrieve(req.body.customerId);
+  res.status(201).send(customer);
+});
+
+/**
  * Create a charge
  * 
  */
 app.post('/charge/create', async (req, res) => {
+  console.log('Im coming from here');
+  console.log(req.body);
   /* Create the charge */
   const charge = await stripe.charges.create({
     amount: req.body.price,
