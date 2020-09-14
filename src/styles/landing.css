@@ -56,3 +56,27 @@
   box-sizing: border-box;
 }
 
+@media only screen and (max-width: 600px) {
+
+  .landing__wrapper {
+    padding-top: 80px;
+  }
+
+  .header__image {
+    display: none;
+  }
+
+  .product__section {
+    padding: 0px 16px;
+  }
+
+  .product__row {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .section__title {
+    font-size: 20px;
+  }
+
+}

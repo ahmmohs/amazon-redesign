@@ -70,3 +70,22 @@
   color: rgb(255, 59, 59);
   font-weight: bold;
 }
+
+@media only screen and (max-width: 600px) {
+
+  .login__wrapper {
+    height: 0px;
+  }
+
+  .login__container {
+    height: calc(100vh - 600px);
+    padding: 112px 16px 0px 16px;
+  }
+
+  .login__right {
+    background: transparent;
+    box-shadow: none;
+    padding: 0px;
+  }
+
+}

@@ -18,6 +18,7 @@ function CheckoutProducts () {
       {
         cart.map((item, i) => (
           <SidebarProduct
+            key={i}
             id={item.id}
             image={item.image}
             title={item.title}

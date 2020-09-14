@@ -12,7 +12,7 @@ import '../styles/product.css';
 
 const propTypes = {
   /** Product ID */
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   /** Product name */
   title: PropTypes.string.isRequired,
   /** Product price */
@@ -76,7 +76,7 @@ function Product ({id, title, price, rating, image}) {
       <div className="product__rating">
         {
           Array(rating).fill().map((_, i) => (
-            <img src={ratingStar} alt="" className="rating__star" />
+            <img key={i} src={ratingStar} alt="" className="rating__star" />
           ))
         }
       </div>

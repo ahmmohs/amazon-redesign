@@ -27,6 +27,7 @@
   border-radius: 8px;
   box-shadow: 0px 3px 5px -2px #ccc;
   margin-bottom: 32px;
+  box-sizing: border-box;
 }
 
 .order__top {
@@ -108,4 +109,46 @@
   width: 100%;
   margin-top: 16px;
   text-align: right;
+}
+
+@media only screen and (max-width: 1200px) {
+
+  .orders__container {
+    width: 800px;
+  }
+
+}
+
+@media only screen and (max-width: 1024px) {
+
+  .orders__container {
+    width: 600px;
+  }
+
+}
+
+@media only screen and (max-width: 768px) {
+  .orders__container {
+    width: 500px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .orders__wrapper {
+    padding-top: 112px;
+  }
+
+  .orders__container {
+    width: 343px;
+  }
+
+  .order__container {
+    padding: 16px;
+  }
+
+  .order__top {
+    flex-direction: column;
+    align-items: flex-start;
+    height: 80px;
+  }
 }

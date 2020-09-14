@@ -10,7 +10,7 @@ import {
 import { Link, useHistory} from 'react-router-dom';
 import { useStateValue } from '../../StateProvider';
 import axios from '../../reducer/axios';
-import { db } from '../../config/firebase';
+import { db } from '../../utils/firebase';
 
 import SavedCheckoutInput from './SavedCheckoutInput';
 
@@ -39,6 +39,7 @@ function CheckoutInputs () {
   const elements = useElements();
   const history = useHistory();
 
+  const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
 
@@ -378,216 +379,230 @@ function CheckoutInputs () {
           }
         });
     }
+    setLoading(false);
   }, [user]);
 
   return (
     <div className="checkout__inputs">
       {
-        (usingAddress !== null) ? (
+        loading ? (
+          <div className="loading__container">
+            Loading
+            <div className="loader"></div>
+          </div>
+        ) : (
           <div className="input__wrapper">
-            <div className="input__title">
-              Select address
-              <div className="new__method" onClick={() => setUsingAddress(null)}>or add new address</div>
-            </div>
             {
-              addresses.map((addy, i) => (
-                <SavedCheckoutInput
-                  id={addy.id}
-                  title={`${addy.fName} ${addy.lName}`}
-                  subtitle={`${addy.line1} ${addy.line2}`}
-                  description={`${addy.state} ${addy.postal_code}`}
-                  currentlySelected={usingAddress}
-                  index={i}
-                  selectFn={handleAddress}
-                  deleteFn={deleteAddress}
-                />
-              ))
+              (usingAddress !== null) ? (
+                <div className="input__wrapper">
+                  <div className="input__title">
+                    Select address
+                    <div className="new__method" onClick={() => setUsingAddress(null)}>or add new address</div>
+                  </div>
+                  {
+                    addresses.map((addy, i) => (
+                      <SavedCheckoutInput
+                        key={i}
+                        id={addy.id}
+                        title={`${addy.fName} ${addy.lName}`}
+                        subtitle={`${addy.line1} ${addy.line2}`}
+                        description={`${addy.state} ${addy.postal_code}`}
+                        currentlySelected={usingAddress}
+                        index={i}
+                        selectFn={handleAddress}
+                        deleteFn={deleteAddress}
+                      />
+                    ))
+                  }
+              </div>
+              ) : (
+                <div>
+                  <div className="input__title">
+                    Add new shipping address
+                    {addresses.length > 0 && <div className="new__method" onClick={() => setUsingAddress(0)}>or select existing</div>}
+                  </div>
+                  {/* Address */}
+                  <div className="input--full">
+                    <div className="input--half">
+                      <div className="input__description">First Name</div>
+                      <input
+                        value={address.fName}
+                        type="text"
+                        className={(error !== '' && address.fName === '') ? 'input input--error' : 'input'}
+                        placeholder="John"
+                        onChange={e => handleInput(e, 'fName')}
+                      />
+                    </div>
+                    <div className="input--half">
+                      <div className="input__description">Last Name</div>
+                      <input
+                        value={address.lName}
+                        type="text"
+                        className={(error !== '' && address.lName === '') ? 'input input--error' : 'input'}
+                        placeholder="Doe"
+                        onChange={e => handleInput(e, 'lName')}
+                      />
+                    </div>
+                  </div>
+                  <div className="input__description">Address</div>
+                  <input
+                    value={address.line1}
+                    type="text"
+                    className={(error !== '' && address.line1 === '') ? 'input input--error' : 'input'}
+                    placeholder="123 My Street"
+                    onChange={e => handleInput(e, 'line1')}
+                  />
+                  <div className="input--full">
+                    <div className="input--twird">
+                      <div className="input__description">Apartment, suite, etc (optional)</div>
+                      <input
+                        value={address.line2}
+                        type="text"
+                        className="input"
+                        placeholder=""
+                        onChange={e => handleInput(e, 'line2')}
+                      />
+                    </div>
+                    <div className="input--third">
+                      <div className="input__description">City</div>
+                      <input
+                        value={address.city}
+                        type="text"
+                        className={(error !== '' && address.city === '') ? 'input input--error' : 'input'}
+                        placeholder=""
+                        onChange={e => handleInput(e, 'city')}
+                      />
+                    </div>
+                  </div>
+                  <div className="input--full">
+                    <div className="input--third">
+                      <div className="input__description">Country/Region</div>
+                      <input
+                        value={address.country}
+                        type="text"
+                        className={(error !== '' && address.country === '') ? 'input input--error' : 'input'}
+                        placeholder="United States"
+                        onChange={e => handleInput(e, 'country')}
+                      />
+                    </div>
+                    <div className="input--third">
+                      <div className="input__description">State</div>
+                      <input
+                        value={address.state}
+                        type="text"
+                        className={(error !== '' && address.state === '') ? 'input input--error' : 'input'}
+                        placeholder="New York"
+                        onChange={e => handleInput(e, 'state')}
+                      />
+                    </div>
+                    <div className="input--third">
+                      <div className="input__description">Zipcode</div>
+                      <input
+                        value={address.postal_code}
+                        type="text"
+                        className={(error !== '' && address.postal_code === '') ? 'input input--error' : 'input'}
+                        placeholder="12345"
+                        onChange={e => handleInput(e, 'postal_code')}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )
             }
-          </div>
-        ) : (
-          <div>
-            <div className="input__title">
-              Add new shipping address
-              {addresses.length > 0 && <div className="new__method" onClick={() => setUsingAddress(0)}>or select existing</div>}
+            {/* Display payment form, if they want to add new payment method
+                or else display the selector for the previous payment method */}
+            {
+              (usingPayment !== null) ? (
+                <div>
+                  <div style={{marginTop: '16px'}} className="input__title">
+                    Select payment method
+                    <div className="new__method" onClick={() => {
+                      setUsingPayment(null);
+                      setCardComplete({...cardComplete, cardHolder: ''});
+                    }}>
+                      or add new method
+                    </div>
+                  </div>
+                  {
+                    payments.map((payment, i) => (
+                      <SavedCheckoutInput
+                        key={i}
+                        id={payment.id}
+                        title={payment.name}
+                        subtitle={payment.brand}
+                        description={`ending with ${payment.lastFour}`}
+                        currentlySelected={usingPayment}
+                        index={i}
+                        selectFn={setUsingPayment}
+                        deleteFn={deleteCard}
+                      />
+                    ))
+                  }
+                </div>
+              ) : (
+                <div>
+                  <div style={{marginTop: '16px'}} className="input__title">
+                    Add new payment method
+                    {payments.length > 0 && <div className="new__method" onClick={() => {
+                      setUsingPayment(0);
+                      setCardComplete({...cardComplete, cardHolder: 'f'});
+                    }}>or select existing</div>}
+                  </div>
+                  {/* Payment form */}
+                  <form onSubmit={handleSubmit}>
+                    <div className="input__description">Card number</div>
+                    <CardNumberElement
+                      onChange={e => handleCard(e)}
+                      className={(error !== '' && !cardComplete.cardNumber) ? 'input input--error stripe__input' : 'input stripe__input'}
+                      options={options}
+                    />
+                    <div className="input__description">Card holder</div>
+                    <input
+                      value={cardComplete.cardHolder}
+                      type="text"
+                      className={(error !== '' && cardComplete.cardHolder === '') ? 'input input--error stripe__input' : 'input stripe__input'}
+                      placeholder="John Doe"
+                      onChange={e => setCardComplete({...cardComplete, cardHolder: e.target.value})}
+                    />
+                    <div className="input--full">
+                      <div className="input--half">
+                        <div className="input__description">Expiry</div>
+                        <CardExpiryElement
+                          onChange={e => handleCard(e)}
+                          className={(error !== '' && !cardComplete.cardDate) ? 'input input--error stripe__input' : 'input stripe__input'}
+                          options={options}
+                        />
+                      </div>
+                      <div className="input--half">
+                        <div className="input__description">CVV</div>
+                        <CardCvcElement
+                          onChange={e => handleCard(e)}
+                          className={(error !== '' && !cardComplete.cardCvc) ? 'input input--error stripe__input' : 'input stripe__input'}
+                          options={options}
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              )
+            }
+            {/* Payment buttons */}
+            <div className="payment-button__wrapper">
+              <Link to="/">
+                <div className="continue__shopping">
+                  <img src={returnIcon} alt="" className="return__carot"/>
+                  Continue Shopping
+                </div>
+              </Link>
+              <button onClick={handleSubmit} className="button button--orange button--payment">
+                {processing ? 'Processing Payment...' : 'Complete Order'}
+              </button>
             </div>
-            {/* Address */}
-            <div className="input--full">
-              <div className="input--half">
-                <div className="input__description">First Name</div>
-                <input
-                  value={address.fName}
-                  type="text"
-                  className={(error !== '' && address.fName === '') ? 'input input--error' : 'input'}
-                  placeholder="John"
-                  onChange={e => handleInput(e, 'fName')}
-                />
-              </div>
-              <div className="input--half">
-                <div className="input__description">Last Name</div>
-                <input
-                  value={address.lName}
-                  type="text"
-                  className={(error !== '' && address.lName === '') ? 'input input--error' : 'input'}
-                  placeholder="Doe"
-                  onChange={e => handleInput(e, 'lName')}
-                />
-              </div>
-            </div>
-            <div className="input__description">Address</div>
-            <input
-              value={address.line1}
-              type="text"
-              className={(error !== '' && address.line1 === '') ? 'input input--error' : 'input'}
-              placeholder="123 My Street"
-              onChange={e => handleInput(e, 'line1')}
-            />
-            <div className="input--full">
-              <div className="input--twird">
-                <div className="input__description">Apartment, suite, etc (optional)</div>
-                <input
-                  value={address.line2}
-                  type="text"
-                  className="input"
-                  placeholder=""
-                  onChange={e => handleInput(e, 'line2')}
-                />
-              </div>
-              <div className="input--third">
-                <div className="input__description">City</div>
-                <input
-                  value={address.city}
-                  type="text"
-                  className={(error !== '' && address.city === '') ? 'input input--error' : 'input'}
-                  placeholder=""
-                  onChange={e => handleInput(e, 'city')}
-                />
-              </div>
-            </div>
-            <div className="input--full">
-              <div className="input--third">
-                <div className="input__description">Country/Region</div>
-                <input
-                  value={address.country}
-                  type="text"
-                  className={(error !== '' && address.country === '') ? 'input input--error' : 'input'}
-                  placeholder="United States"
-                  onChange={e => handleInput(e, 'country')}
-                />
-              </div>
-              <div className="input--third">
-                <div className="input__description">State</div>
-                <input
-                  value={address.state}
-                  type="text"
-                  className={(error !== '' && address.state === '') ? 'input input--error' : 'input'}
-                  placeholder="New York"
-                  onChange={e => handleInput(e, 'state')}
-                />
-              </div>
-              <div className="input--third">
-                <div className="input__description">Zipcode</div>
-                <input
-                  value={address.postal_code}
-                  type="text"
-                  className={(error !== '' && address.postal_code === '') ? 'input input--error' : 'input'}
-                  placeholder="12345"
-                  onChange={e => handleInput(e, 'postal_code')}
-                />
-              </div>
-            </div>
+            <div className="error__message">{error}</div>
           </div>
         )
       }
-      {/* Display payment form, if they want to add new payment method
-          or else display the selector for the previous payment method */}
-      {
-        (usingPayment !== null) ? (
-          <div>
-            <div style={{marginTop: '16px'}} className="input__title">
-              Select payment method
-              <div className="new__method" onClick={() => {
-                setUsingPayment(null);
-                setCardComplete({...cardComplete, cardHolder: ''});
-              }}>
-                or add new method
-              </div>
-            </div>
-            {
-              payments.map((payment, i) => (
-                <SavedCheckoutInput
-                  id={payment.id}
-                  title={payment.name}
-                  subtitle={payment.brand}
-                  description={`ending with ${payment.lastFour}`}
-                  currentlySelected={usingPayment}
-                  index={i}
-                  selectFn={setUsingPayment}
-                  deleteFn={deleteCard}
-                />
-              ))
-            }
-          </div>
-        ) : (
-          <div>
-            <div style={{marginTop: '16px'}} className="input__title">
-              Add new payment method
-              {payments.length > 0 && <div className="new__method" onClick={() => {
-                setUsingPayment(0);
-                setCardComplete({...cardComplete, cardHolder: 'f'});
-              }}>or select existing</div>}
-            </div>
-            {/* Payment form */}
-            <form onSubmit={handleSubmit}>
-              <div className="input__description">Card number</div>
-              <CardNumberElement
-                onChange={e => handleCard(e)}
-                className={(error !== '' && !cardComplete.cardNumber) ? 'input input--error stripe__input' : 'input stripe__input'}
-                options={options}
-              />
-              <div className="input__description">Card holder</div>
-              <input
-                value={cardComplete.cardHolder}
-                type="text"
-                className={(error !== '' && cardComplete.cardHolder === '') ? 'input input--error stripe__input' : 'input stripe__input'}
-                placeholder="John Doe"
-                onChange={e => setCardComplete({...cardComplete, cardHolder: e.target.value})}
-              />
-              <div className="input--full">
-                <div className="input--half">
-                  <div className="input__description">Expiry</div>
-                  <CardExpiryElement
-                    onChange={e => handleCard(e)}
-                    className={(error !== '' && !cardComplete.cardDate) ? 'input input--error stripe__input' : 'input stripe__input'}
-                    options={options}
-                  />
-                </div>
-                <div className="input--half">
-                  <div className="input__description">CVV</div>
-                  <CardCvcElement
-                    onChange={e => handleCard(e)}
-                    className={(error !== '' && !cardComplete.cardCvc) ? 'input input--error stripe__input' : 'input stripe__input'}
-                    options={options}
-                  />
-                </div>
-              </div>
-            </form>
-          </div>
-        )
-      }
-      {/* Payment buttons */}
-      <div className="payment-button__wrapper">
-        <Link to="/">
-          <div className="continue__shopping">
-            <img src={returnIcon} alt="" className="return__carot"/>
-            Continue Shopping
-          </div>
-        </Link>
-        <button onClick={handleSubmit} className="button button--orange button--payment">
-          {processing ? 'Processing Payment...' : 'Complete Order'}
-        </button>
       </div>
-      <div className="error__message">{error}</div>
-    </div>
   );
 }
 

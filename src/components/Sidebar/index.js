@@ -38,6 +38,7 @@ function Sidebar ({ open, setSidebar }) {
         {
           cart.map((item, i) => (
             <SidebarProduct
+              key={i}
               id={item.id}
               image={item.image}
               title={item.title}

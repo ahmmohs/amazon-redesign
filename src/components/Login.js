@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { useHistory } from 'react-router-dom';
-import { auth } from '../config/firebase';
+import { auth } from '../utils/firebase';
 
 import Button from './Buttons/Button';
 

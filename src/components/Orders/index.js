@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { useStateValue } from '../../StateProvider';
-import { db } from '../../config/firebase';
+import { db } from '../../utils/firebase';
 
 import Order from './Order';
 

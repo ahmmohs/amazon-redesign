@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { useStateValue } from '../StateProvider';
-import { Link, useHistory } from 'react-router-dom';
-import { auth } from '../config/firebase';
+import useCheckMobile from '../utils/useCheckMobile';
+import { Switch, Route, Link, useHistory } from 'react-router-dom';
+import { auth } from '../utils/firebase';
 
 import logo from '../assets/logo.png';
 import searchIcon from '../assets/search.svg';
 import cartIcon from '../assets/cart.svg';
+import returnIcon from '../assets/return.svg';
+import userIcon from '../assets/user.svg';
 
 /**
  * Navigation component.
@@ -14,16 +17,43 @@ import cartIcon from '../assets/cart.svg';
  */
 function Navbar ({ setSidebar, sidebarOpen }) {
   const [{ totalQuantity, user }] = useStateValue();
+  const { isMobile } = useCheckMobile();
+  const wrapper = useRef();
   const history = useHistory();
+
+  const [dropdown, setDropdown] = useState(false);
 
   /** Sign in or out the user */
   const handleAuth = () => {
     if (user) {
-      auth.signOut();
+      if (isMobile) {
+        setDropdown(true);
+      } else {
+        auth.signOut();
+      }
     } else {
       history.push('/login')
     }
   }
+
+  const handleClickOutside = e => {
+    if (wrapper.current.contains(e.target)) {
+      return;
+    }
+    setDropdown(false);
+  }
+
+  useEffect(() => {
+    if (isMobile) {
+      document.addEventListener('mousedown', e => handleClickOutside(e));
+      document.addEventListener('scroll', () => {setDropdown(false)});
+    }
+    return () => {
+      console.log('Removing event lsitenr');
+      document.removeEventListener('mousedown', e => handleClickOutside(e));
+      document.removeEventListener('scroll', () => {setDropdown(false)});
+    }
+  }, [isMobile])
 
   return (
     <div className="navbar__wrapper">
@@ -41,7 +71,7 @@ function Navbar ({ setSidebar, sidebarOpen }) {
             <img src={searchIcon} alt="" className="searchbar__icon"/>
           </div>
         </div>
-        {/* Links */}
+        {/* Desktop Links */}
         <div className="nav__links">
           <div className="nav__link" onClick={() => handleAuth()}>
             <div className="nav__link--small">Hello, {user?.displayName}</div>
@@ -59,6 +89,26 @@ function Navbar ({ setSidebar, sidebarOpen }) {
           <div className="nav__cart" onClick={() => setSidebar(!sidebarOpen)}>
             <img src={cartIcon} alt="" className="nav__cart--icon"/>
             <div className="nav__cart--count">{totalQuantity}</div>
+          </div>
+        </div>
+        {/* Mobile Links */}
+        <div className="nav__links--mobile">
+          <Switch>
+            <Route path={["/orders", "/checkout", "/cart"]}>
+              <div className="mobile__link">
+                <img style={{marginRight: '2px'}} src={returnIcon} alt="" className="mobile__link--icon"/>
+              </div>
+            </Route>
+          </Switch>
+          <div className="footer__button bold" onClick={() => handleAuth()}>
+            <img src={userIcon} alt="" className="footer__icon"/>
+            {user? user?.displayName : 'Guest'}
+            <div className={`user__options ${dropdown && 'user__options--open'}`} ref={wrapper}>
+              <div onClick={() => {
+                auth.signOut();
+                setDropdown(false);
+              }} className="user__option">Sign out</div>
+            </div>
           </div>
         </div>
       </div>
