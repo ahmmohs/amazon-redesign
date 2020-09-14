@@ -1,8 +1,8 @@
 const functions = require('firebase-functions');
+const keys = require('./config/keys');
 const express = require('express');
 const cors = require('cors');
-const { response } = require('express');
-const stripe = require('stripe')(functions.config().stripe.key);
+const stripe = require('stripe')(keys.stripe);
 
 const app = express();
 
@@ -30,6 +30,46 @@ app.post('/charge/create', async (req, res) => {
     clientSecret: paymentIntent.client_secret
   });
 });
+
+/**
+ * Add a customer
+ */
+app.post('/charge/customer', async (req, res) => {
+  console.log(req.body);
+
+  console.log('Attaching payment method to customer');
+
+  const customer = await stripe.customers.create({
+    email: req.body.email,
+    source: req.body.token.token.id
+  });
+
+  res.status(201).send({
+    customer
+  });
+})
+
+/**
+ * Create a charge
+ */
+
+app.post('/charge/charge', async (req, res) => {
+  console.log(req.body);
+  
+  const charge = await stripe.charges.create({
+    amount: req.body.price,
+    currency: 'usd',
+    customer: req.body.customer,
+    source: req.body.source
+  });
+
+  res.status(201).send({
+    success: true,
+    created: charge.created,
+    id: charge.id,
+    amount: charge.amount,
+  });
+})
 
 /**
  * Get payment method details

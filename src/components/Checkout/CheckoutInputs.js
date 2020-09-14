@@ -14,6 +14,7 @@ import axios from '../../reducer/axios';
 import { db } from '../../config/firebase';
 
 import returnIcon from '../../assets/return.svg';
+import SavedCheckoutInput from './SavedCheckoutInput';
 
 /**
  * Stripe element style options
@@ -22,7 +23,6 @@ const options = {
   style: {
     base: {
       color: '#333',
-      placeholder: '#8b8b8b',
       fontFamily: "'Arimo', sans-serif",
       fontSize: '18px'
     }
@@ -41,11 +41,34 @@ function CheckoutInputs () {
 
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
-  const [clientSecret, setClientSecret] = useState(null);
+
+  const [address, setAddress] = useState({});
   const [addresses, setAddresses] = useState([]);
+
+  const [customerId, setCustomerId] = useState(null);
   const [payments, setPayments] = useState([]);
+  const [usingPayment, setUsingPayment] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
 
   const [{ cart, user }, dispatch] = useStateValue();
+
+  /**
+   * Handles address inputs
+   * 
+   * @param {any} e event
+   * @param {string} key key of address to update
+   */
+  const handleInput = (e, key) => {
+    setAddress({...address, [key]: e.target.value});
+  }
+
+  /**
+   * Checks if form is ready to be submitted
+   * 
+   */
+  const checkComplete = () => {
+
+  }
 
   /**
    * Handle payment submission
@@ -56,36 +79,48 @@ function CheckoutInputs () {
     e.preventDefault();
     setProcessing(true);
 
-    /* Get stripe paymentIntent payload */
-    const payload = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardNumberElement)
-      }
-    }).then((res) => {
-      if (res.hasOwnProperty('paymentIntent')) {
+    if (payments.length === 0) {
+      const card = elements.getElement(CardNumberElement);
+      const token = await stripe.createToken(card)
+  
+      const customer = await axios({
+        method: 'post',
+        url: 'charge/customer',
+        data: {
+          token,
+          email: user.email
+        }
+      });
 
-        /* Add the order to the users order collection */
+      const charge = await axios({
+        method: 'post',
+        url: 'charge/charge',
+        data: {
+          customer: customer.data.customer.id,
+          price: cart.reduce((a, b) => a + (b.price * b.count), 0).toFixed(2) * 100,
+          source: token.token.id
+        }
+      });
+
+      if (charge.data.success) {
         db
           .collection('users')
           .doc(user?.uid)
           .collection('orders')
-          .doc(res.paymentIntent.id)
+          .doc(charge.data.id)
           .set({
             cart,
-            amount: res.paymentIntent.amount,
-            created: res.paymentIntent.created
+            amount: charge.data.amount,
+            created: charge.data.created
           });
-        
-        /* Save the payment method for the user */
+  
         db
           .collection('users')
           .doc(user?.uid)
-          .collection('methods')
-          .doc(res.paymentIntent.payment_method)
-          .set({
-            paymentMethod: res.paymentIntent.payment_method
-          });
-
+          .collection('sources')
+          .doc(customer.data.customer.id)
+          .set(customer.data.customer);
+        
         setError('');
         setProcessing(false);
 
@@ -100,48 +135,52 @@ function CheckoutInputs () {
         setProcessing(false);
         setError('Error processing payment');
       }
-    });
+
+    } else {
+
+      let source = '';
+      if (usingPayment == null) {
+        const card = elements.getElement(CardNumberElement);
+        source = await stripe.createToken(card)
+      } else {
+        source = payments[usingPayment].id;
+      }
+
+      const charge = await axios({
+        method: 'post',
+        url: 'charge/charge',
+        data: {
+          customer: customerId,
+          price: cart.reduce((a, b) => a + (b.price * b.count), 0).toFixed(2) * 100,
+          source,
+        }
+      });
+
+      console.log(charge.data);
+    }
   }
 
   useEffect(() => {
-    /* Get the users payment */
-    if (user) {
+    /* Get the users payment methods*/
+    if (user && payments.length === 0) {
       db
         .collection('users')
         .doc(user?.uid)
-        .collection('methods')
-        .onSnapshot(methods => {
-          methods.forEach(method => {
-            getPayments(method.data().paymentMethod);
-          })
+        .collection('customerId')
+        .onSnapshot(ids => {
+          if (ids.docs.length > 0) {
+            const costumer = ids.docs[0].data();
+            setCustomerId(costumer.id);
+            setPayments(costumer.sources.data.map(source => ({
+              id: source.id,
+              lastFour: source.last4,
+              brand: source.brand
+            })));
+            setUsingPayment(0);
+          }
         })
     }
-
-    /* Get payment method details */
-    const getPayments = async (method) => {
-      const res = await axios({
-        method: 'post',
-        url: `method/get?pm=${method}`
-      });
-      console.log(res.data);
-      setPayments([...payments, {
-        lastFour: res.data.last4,
-        brand: res.data.brand,
-      }]);
-    }
-
-    /* Get client secret whenever price of cart is updated */
-    const getClientSecret = async () => {
-      const res = await axios({
-        method: 'post',
-        url: `/charge/create?total=${cart.reduce((a, b) => a + (b.price * b.count), 0).toFixed(2) * 100}`
-      });
-      setClientSecret(res.data.clientSecret);
-    }
-    getClientSecret();
-  }, [cart]);
-
-  console.log(payments);
+  }, [payments, user]);
 
   return (
     <div className="checkout__inputs">
@@ -150,70 +189,138 @@ function CheckoutInputs () {
       <div className="input--full">
         <div className="input--half">
           <div className="input__description">First Name</div>
-          <input type="text" className="input" placeholder="John" />
+          <input
+            value={address.fName}
+            type="text"
+            className="input"
+            placeholder="John"
+            onChange={e => handleInput(e, 'fName')}
+          />
         </div>
         <div className="input--half">
           <div className="input__description">Last Name</div>
-          <input type="text" className="input" placeholder="Doe" />
+          <input
+            value={address.lName}
+            type="text"
+            className="input"
+            placeholder="Doe"
+            onChange={e => handleInput(e, 'lName')}
+          />
         </div>
       </div>
       <div className="input__description">Address</div>
-      <input type="text" className="input" placeholder="123 My Street" />
+      <input
+        value={address.line1}
+        type="text"
+        className="input"
+        placeholder="123 My Street"
+        onChange={e => handleInput(e, 'line1')}
+      />
       <div className="input__description">Apartment, suite, etc (optional)</div>
-      <input type="text" className="input" placeholder="" />
+      <input
+        value={address.line2}
+        type="text"
+        className="input"
+        placeholder=""
+        onChange={e => handleInput(e, 'line2')}
+      />
       <div className="input--full">
         <div className="input--third">
           <div className="input__description">Country/Region</div>
-          <input type="text" className="input" placeholder="United States" />
+          <input
+            value={address.country}
+            type="text"
+            className="input"
+            placeholder="United States"
+            onChange={e => handleInput(e, 'country')}
+          />
         </div>
         <div className="input--third">
           <div className="input__description">State</div>
-          <input type="text" className="input" placeholder="New York" />
+          <input
+            value={address.state}
+            type="text"
+            className="input"
+            placeholder="New York"
+            onChange={e => handleInput(e, 'state')}
+          />
         </div>
         <div className="input--third">
           <div className="input__description">Zipcode</div>
-          <input type="text" className="input" placeholder="12345" />
+          <input
+            value={address.postal_code}
+            type="text"
+            className="input"
+            placeholder="12345"
+            onChange={e => handleInput(e, 'postal_code')}
+          />
         </div>
       </div>
-      <div style={{marginTop: '32px'}} className="input__title">Add new payment method</div>
-      {/* Payment form */}
-      <form onSubmit={handleSubmit}>
-        <div className="input__description">Card number</div>
-        <CardNumberElement
-          className="input stripe__input"
-          options={options}
-        />
-        <div className="input__description">Card holder</div>
-        <input type="text" className="input" placeholder="John Doe" />
-        <div className="input--full">
-          <div className="input--half">
-            <div className="input__description">Expiry</div>
-            <CardExpiryElement
-              className="input stripe__input"
-              options={options}
-            />
+      {/* Display payment form, if they want to add new payment method
+          or else display the selector for the previous payment method */}
+      {
+        (payments.length > 0 && usingPayment !== null) ? (
+          <div>
+            <div style={{marginTop: '32px'}} className="input__title">Select payment method</div>
+            {
+              payments.map((payment, i) => (
+                <SavedCheckoutInput
+                  title={payment.brand}
+                  description={`Ending with ${payment.lastFour}`}
+                  currentlySelected={usingPayment}
+                  index={i}
+                  selectFn={setUsingPayment}
+                />
+              ))
+            }
+            <button onClick={handleSubmit} className="button button--orange button--payment">
+              {processing ? 'Processing Payment...' : 'Complete Order'}
+            </button>
           </div>
-          <div className="input--half">
-            <div className="input__description">CVV</div>
-            <CardCvcElement
-              className="input stripe__input"
-              options={options}
-            />
+        ) : (
+          <div>
+            <div style={{marginTop: '32px'}} className="input__title">Add new payment method</div>
+            {/* Payment form */}
+            <form onSubmit={handleSubmit}>
+              <div className="input__description">Card number</div>
+              <CardNumberElement
+                className="input stripe__input"
+                options={options}
+              />
+              <div className="input__description">Card holder</div>
+              <input type="text" className="input" placeholder="John Doe" />
+              <div className="input--full">
+                <div className="input--half">
+                  <div className="input__description">Expiry</div>
+                  <CardExpiryElement
+                    className="input stripe__input"
+                    options={options}
+                  />
+                </div>
+                <div className="input--half">
+                  <div className="input__description">CVV</div>
+                  <CardCvcElement
+                    className="input stripe__input"
+                    options={options}
+                  />
+                </div>
+              </div>
+              <div className="payment-button__wrapper">
+                <Link to="/">
+                  <div className="continue__shopping">
+                    <img src={returnIcon} alt="" className="return__carot"/>
+                    Continue Shopping
+                  </div>
+                </Link>
+                <button className="button button--orange button--payment">
+                  {processing ? 'Processing Payment...' : 'Complete Order'}
+                </button>
+              </div>
+              <div className="error__message">{error}</div>
+            </form>
           </div>
-        </div>
-        <div className="payment-button__wrapper">
-          <Link to="/">
-            <div className="continue__shopping">
-              <img src={returnIcon} alt="" className="return__carot"/>
-              Continue Shopping
-            </div>
-          </Link>
-          <button className="button button--orange button--payment">
-            {processing ? 'Processing Payment...' : 'Complete Order'}
-          </button>
-        </div>
-        <div className="error__message">{error}</div>
-      </form>
+        )
+      }
     </div>
   );
 }

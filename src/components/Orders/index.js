@@ -16,6 +16,7 @@ function Orders () {
         .collection('users')
         .doc(user?.uid)
         .collection('orders')
+        .orderBy('created', 'desc')
         .onSnapshot(orders => {
           setOrders(orders.docs.map(order => ({
             id: order.id,
